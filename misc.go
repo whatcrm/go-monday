@@ -2,101 +2,76 @@ package monday
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/valyala/fasthttp"
 	"log"
 	"net/url"
+	"reflect"
 	"strings"
 )
 
-func (api *API) getAgent(method, baseURL string, params *RequestParams) (*fiber.Agent, *fiber.Request) {
-	a := fiber.AcquireAgent()
-	req := a.Request()
+func (api *API) call(method, baseURL string, params *RequestParams) (req *fasthttp.Request, resp *fasthttp.Response) {
+
+	req = fasthttp.AcquireRequest()
+	resp = fasthttp.AcquireResponse()
+
+	req.Header.SetContentType(applicationJson)
 	req.Header.SetMethod(method)
+	req.Header.Set(fasthttp.HeaderAuthorization, api.Auth)
 
-	req.Header.SetContentType(fiber.MIMEApplicationJSON)
-	req.Header.SetCanonical([]byte("Authorization"), []byte("Bearer "+api.Auth))
-
-	a.MaxRedirectsCount(1)
-
-	req.SetRequestURI(api.buildURL(baseURL, params))
-	if params != nil {
-		req.SetRequestURI(api.buildURL(baseURL, params))
-	}
-	return a, req
-}
-
-func (api *API) callMethod(options callMethodOptions) (err error) {
-
-	a, req := api.getAgent(options.Method, options.BaseURL, options.Params)
-
-	if options.In != nil {
-		api.log("marshaling the data...")
-		req, err = marshal(options.In, req)
-		if err != nil {
-			return
-		}
-	}
-
-	api.log("sending the data...")
-	if err = a.Parse(); err != nil {
-		log.Println(err)
-		return
-	}
-
-	api.log("getting the answer...")
-	status, body, errs := a.Bytes()
-	if errs != nil {
-		log.Println("Errs: ", errs)
-		err = errs[0]
-		return
-	}
-
-	if err = errorCheck(body, status); err != nil {
-		return
-	}
-	api.log("errorCheck passed")
-
-	if err = json.Unmarshal(body, options.Out); err != nil {
-		return fiber.NewError(400, string(body))
-	}
-	api.log("unmarshal passed")
-
-	err = statusChecker(status)
+	baseURL = api.buildURL(baseURL, params)
+	req.SetRequestURI(baseURL)
+	api.log(baseURL)
 	return
 }
 
-func statusChecker(status int) error {
-	switch status {
-	case 400:
-		return fiber.ErrBadRequest
-	case 401:
-		return fiber.ErrUnauthorized
-	case 402:
-		return fiber.ErrPaymentRequired
-	case 403:
-		return fiber.ErrForbidden
-	case 404:
-		return fiber.ErrNotFound
-	case 201:
-		return fiber.NewError(201, "Created")
-	case 204:
-		return fiber.NewError(204, "No content")
-	case 200, 202, 302, 301:
-		return nil
-	default:
-		return fiber.NewError(status, "unknown status")
-	}
-}
-
-func marshal(data interface{}, req *fiber.Request) (*fiber.Request, error) {
-	m, err := json.Marshal(&data)
-	if err != nil {
-		return req, err
+func (api *API) callMethod(options callMethodOptions) (err error) {
+	client := fasthttp.Client{
+		ReadBufferSize: 10000,
 	}
 
-	req.SetBody(m)
-	return req, nil
+	req, resp := api.call(options.Method, options.BaseURL, options.Params)
+	defer fasthttp.ReleaseRequest(req)
+	defer fasthttp.ReleaseResponse(resp)
+
+	if options.In != "" {
+		api.log("setting the body...")
+		req.SetBody([]byte(options.In))
+	}
+
+	api.log("sending the data...")
+	if err = client.DoRedirects(req, resp, 20); err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	api.log(string(resp.Body()))
+	if err = errorCheck(resp.Body(), resp.StatusCode()); err != nil {
+		return err
+	}
+
+	api.log("getting an answer...")
+	if err = json.Unmarshal(resp.Body(), options.Out); err != nil {
+		err = fmt.Errorf("%s", string(resp.Body()))
+		return
+	}
+	return
 }
+
+//	func (api *API) getAnswer(body []byte, status int, out interface{}) (err error) {
+//		//if err = errorCheck(body, status); err != nil {
+//		//	return
+//		//}
+//		//api.log("errorCheck passed")
+//
+//		if err = json.Unmarshal(body, out); err != nil {
+//			err = fmt.Errorf("%d : %s", fasthttp.StatusBadRequest, string(body))
+//			return
+//		}
+//		api.log("unmarshal passed")
+//		return
+//	}
 
 func (api *API) buildURL(baseURL string, params *RequestParams) string {
 	api.fixDomain()
@@ -107,20 +82,38 @@ func (api *API) buildURL(baseURL string, params *RequestParams) string {
 	}
 
 	u.Scheme = scheme
-	query := u.Query()
 
-	if baseURL == oAuth {
-		query.Set("client_id", api.ClientID)
-		query.Set("redirect_uri", params.RedirectURI)
-		query.Set("scope", params.Scope)
-		query.Set("state", params.State)
-		query.Set("app_version_id", params.AppVersionID)
+	if baseURL != oAuth && strings.Contains(baseURL, authorize) {
+		log.Println(u.String())
+		return u.String()
 	}
 
-	//query.Set(Auth, api.Auth)
+	query := u.Query()
+
+	typ := reflect.TypeOf(*params)
+	val := reflect.ValueOf(*params)
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		jsonFieldName := field.Tag.Get("json")
+
+		fieldValue := val.Field(i).Interface()
+		v, ok := fieldValue.(string)
+		if !ok {
+			continue
+		}
+
+		if v == "" {
+			continue
+		}
+
+		if jsonFieldName == "subdomain" && strings.Contains(v, "monday.com") {
+			v, _ = strings.CutSuffix(v, ".monday.com")
+		}
+		query.Set(jsonFieldName, v)
+	}
 
 	u.RawQuery = query.Encode()
-	log.Println(u.String())
+
 	return u.String()
 }
 
@@ -132,7 +125,21 @@ func (api *API) log(message ...interface{}) {
 
 func errorCheck(body []byte, status int) error {
 	// TODO handle body on most used errors
-	return nil
+	if len(body) == 0 && status == fiber.StatusCreated {
+		return nil
+	}
+
+	e := ErrorResponse{}
+	if err := json.Unmarshal(body, &e); err != nil {
+		// if it cannot unmarshal, there is no errors in answer
+		return nil
+	}
+
+	if e.Errors == nil {
+		return nil
+	}
+	log.Println("ErrorResponse: ", e)
+	return fmt.Errorf(e.Errors[0].Message)
 }
 
 func (api *API) fixDomain() {
