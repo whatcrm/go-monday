@@ -5,7 +5,7 @@ const (
 	applicationJson = "application/json"
 	mondayAPI       = "https://api.monday.com/v2"
 	oAuth           = "https://auth.monday.com/oauth2/authorize"
-	authorize       = "oauth2/authorize"
+	tokenRequest    = "https://auth.monday.com/oauth2/token"
 )
 
 const (

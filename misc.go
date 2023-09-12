@@ -2,6 +2,7 @@ package monday
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"
@@ -53,8 +54,8 @@ func (api *API) callMethod(options callMethodOptions) (err error) {
 
 	api.log("getting an answer...")
 	if err = json.Unmarshal(resp.Body(), options.Out); err != nil {
-		err = fmt.Errorf("%s", string(resp.Body()))
-		return
+		err = errors.New(string(resp.Body()))
+		return err
 	}
 	return
 }
@@ -83,7 +84,7 @@ func (api *API) buildURL(baseURL string, params *RequestParams) string {
 
 	u.Scheme = scheme
 
-	if baseURL != oAuth && strings.Contains(baseURL, authorize) {
+	if baseURL != tokenRequest || params == nil {
 		log.Println(u.String())
 		return u.String()
 	}
@@ -133,6 +134,10 @@ func errorCheck(body []byte, status int) error {
 	if err := json.Unmarshal(body, &e); err != nil {
 		// if it cannot unmarshal, there is no errors in answer
 		return nil
+	}
+
+	if e.Error != "" && e.ErrorDescription != "" {
+		return fmt.Errorf(e.ErrorDescription)
 	}
 
 	if e.Errors == nil {

@@ -3,15 +3,16 @@ package monday
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/whatcrm/go-monday/models"
 	"strings"
 )
 
-func (c *Get) Token(redirectURI string) (out interface{}, err error) {
+func (c *Get) Token(redirectURI string) (out *Tokens, err error) {
 	options := callMethodOptions{
-		Method:  fiber.MethodGet,
-		BaseURL: oAuth,
+		Method:  fiber.MethodPost,
+		BaseURL: tokenRequest,
 		In:      "",
-		Out:     nil,
+		Out:     &out,
 		Params: &RequestParams{
 			ClientID:     c.api.ClientID,
 			ClientSecret: c.api.ClientSecret,
@@ -35,6 +36,19 @@ func (api *API) IsAdmin() (out interface{}, err error) {
 	}
 
 	err = api.callMethod(options)
+	return
+}
+
+func (c *Get) Account(query string) (out *models.Account, err error) {
+	options := callMethodOptions{
+		Method:  fiber.MethodPost,
+		BaseURL: tokenRequest,
+		In:      query,
+		Out:     &out,
+		Params:  nil,
+	}
+
+	err = c.api.callMethod(options)
 	return
 }
 

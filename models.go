@@ -10,6 +10,12 @@ type API struct {
 	Debug        bool
 }
 
+type Tokens struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	Scope       string `json:"scope"`
+}
+
 type RequestParams struct {
 	ID string `json:"id"`
 
@@ -47,5 +53,12 @@ type ErrorResponse struct {
 			TypeName string `json:"typeName"`
 		} `json:"extensions"`
 	} `json:"errors"`
-	AccountID int `json:"account_id"`
+	AccountID        int    `json:"account_id"`
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
+}
+
+type ErrorResp struct {
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
 }
