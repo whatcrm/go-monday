@@ -19,7 +19,7 @@ func (api *API) call(method, baseURL string, params *RequestParams) (req *fastht
 
 	req.Header.SetContentType(applicationJson)
 	req.Header.SetMethod(method)
-	req.Header.Set(fasthttp.HeaderAuthorization, api.Auth)
+	req.Header.Set(fasthttp.HeaderAuthorization, "Bearer "+api.Auth)
 
 	baseURL = api.buildURL(baseURL, params)
 	req.SetRequestURI(baseURL)
@@ -36,13 +36,14 @@ func (api *API) callMethod(options callMethodOptions) (err error) {
 	defer fasthttp.ReleaseRequest(req)
 	defer fasthttp.ReleaseResponse(resp)
 
-	if options.In != "" {
+	if options.In != nil || options.In == meQuery {
 		api.log("setting the body...")
-		req.SetBody([]byte(options.In))
+		req.SetBody([]byte(api.setQueries(options.In, "")))
+		api.log("QUERY: ", string(req.Body()))
 	}
 
 	api.log("sending the data...")
-	if err = client.DoRedirects(req, resp, 20); err != nil {
+	if err = client.DoRedirects(req, resp, 10); err != nil {
 		fmt.Println("Error: ", err)
 		return
 	}
@@ -60,20 +61,6 @@ func (api *API) callMethod(options callMethodOptions) (err error) {
 	return
 }
 
-//	func (api *API) getAnswer(body []byte, status int, out interface{}) (err error) {
-//		//if err = errorCheck(body, status); err != nil {
-//		//	return
-//		//}
-//		//api.log("errorCheck passed")
-//
-//		if err = json.Unmarshal(body, out); err != nil {
-//			err = fmt.Errorf("%d : %s", fasthttp.StatusBadRequest, string(body))
-//			return
-//		}
-//		api.log("unmarshal passed")
-//		return
-//	}
-
 func (api *API) buildURL(baseURL string, params *RequestParams) string {
 	api.fixDomain()
 
@@ -85,7 +72,6 @@ func (api *API) buildURL(baseURL string, params *RequestParams) string {
 	u.Scheme = scheme
 
 	if baseURL != tokenRequest || params == nil {
-		log.Println(u.String())
 		return u.String()
 	}
 

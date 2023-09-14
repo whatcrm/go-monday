@@ -1,6 +1,8 @@
 package monday
 
-import "github.com/whatcrm/go-monday/models"
+import (
+	"github.com/whatcrm/go-monday/models"
+)
 
 type API struct {
 	ClientID     string
@@ -31,12 +33,14 @@ type RequestParams struct {
 }
 
 type Data struct {
-	Users []models.User `json:"users,omitempty"`
+	Users   []models.User   `json:"users,omitempty"`
+	Me      *models.Me      `json:"me,omitempty"`
+	Account *models.Account `json:"account,omitempty"`
 }
 
 type ResponseData struct {
-	AccountID float64 `json:"account_id"`
-	Data      *Data   `json:"data"`
+	Data      *Data `json:"data,omitempty"`
+	AccountID int   `json:"account_id,omitempty"`
 }
 
 type ErrorResponse struct {
