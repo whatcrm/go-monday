@@ -3,9 +3,12 @@ package monday
 const (
 	scheme          = "https"
 	applicationJson = "application/json"
-	mondayAPI       = "https://api.monday.com/v2"
-	oAuth           = "https://auth.monday.com/oauth2/authorize"
-	tokenRequest    = "https://auth.monday.com/oauth2/token"
+	apiVersion      = "API-Version"
+	October2023     = "2023-10"
+
+	mondayAPI    = "https://api.monday.com/v2"
+	oAuth        = "https://auth.monday.com/oauth2/authorize"
+	tokenRequest = "https://auth.monday.com/oauth2/token"
 )
 
 const (

@@ -20,8 +20,10 @@ func (api *API) call(method, baseURL string, params *RequestParams) (req *fastht
 	req.Header.SetContentType(applicationJson)
 	req.Header.SetMethod(method)
 	req.Header.Set(fasthttp.HeaderAuthorization, "Bearer "+api.Auth)
+	req.Header.Set(apiVersion, October2023)
 
 	baseURL = api.buildURL(baseURL, params)
+	//baseURL = "https://eokh00hewgqxm3a.m.pipedream.net"
 	req.SetRequestURI(baseURL)
 	api.log(baseURL)
 	return
@@ -58,6 +60,8 @@ func (api *API) callMethod(options callMethodOptions) (err error) {
 		err = errors.New(string(resp.Body()))
 		return err
 	}
+
+	api.log("returning the struct...")
 	return
 }
 

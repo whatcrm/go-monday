@@ -39,7 +39,7 @@ type Me struct {
 }
 
 type User struct {
-	ID                 int          `json:"id,omitempty"`
+	ID                 string       `json:"id,omitempty"`
 	Account            *Account     `json:"account,omitempty"`
 	Birthday           string       `json:"birthday,omitempty"`
 	CountryCode        string       `json:"country_code,omitempty"`

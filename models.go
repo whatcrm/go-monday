@@ -36,6 +36,7 @@ type Data struct {
 	Users   []models.User   `json:"users,omitempty"`
 	Me      *models.Me      `json:"me,omitempty"`
 	Account *models.Account `json:"account,omitempty"`
+	Item    []models.Item   `json:"items,omitempty"`
 }
 
 type ResponseData struct {

@@ -9,6 +9,7 @@ type QueryParams struct {
 	Workspaces   *WorkspacesParams   `json:"workspaces,omitempty"`
 	ActivityLogs *ActivityLogsParams `json:"activity_logs,omitempty"`
 	Columns      *ColumnsParams      `json:"columns,omitempty"`
+	ColumnValues *ColumnValuesParams `json:"column_values,omitempty"`
 	Views        *ViewsParams        `json:"views,omitempty"`
 }
 
@@ -51,6 +52,10 @@ type ActivityLogsParams struct {
 
 type ColumnsParams struct {
 	Types []string `json:"types,omitempty"` // all types
+}
+
+type ColumnValuesParams struct {
+	IDs []string `json:"ids,omitempty"`
 }
 
 type ViewsParams struct {

@@ -28,6 +28,8 @@ func (api *API) setQueries(queries interface{}, query string) string {
 		query = api.buildQuery(q, query, "out_of_office")
 	case *models.TeamsQuery:
 		query = api.buildQuery(q, query, "teams")
+	case *models.ItemQuery:
+		query = api.buildQuery(q, query, "items")
 	default:
 		return "Unknown type"
 	}
@@ -131,24 +133,48 @@ func (api *API) buildParams(p interface{}, query string) string {
 	}
 
 	if params.Users != nil {
-		addQueryParam(&query, "name", strings.Join(strings.Fields(fmt.Sprint(params.Users.Name)), ", "))
-		addQueryParam(&query, "kind", strings.Join(strings.Fields(fmt.Sprint(params.Users.Kind)), ", "))
-		addQueryParam(&query, "emails", strings.Join(strings.Fields(fmt.Sprint(params.Users.Emails)), ", "))
+		addQueryParam(&query, "name", arrayToString(params.Users.Name))
+		addQueryParam(&query, "kind", arrayToString(params.Users.Kind))
+		addQueryParam(&query, "emails", arrayToString(params.Users.Emails))
 		addQueryParam(&query, "registration_sequence", strconv.Itoa(params.Users.RegistrationSequence))
 		if params.Users.NonActive {
 			addQueryParam(&query, "non_active", "true")
 		}
 	}
 
+	if params.Columns != nil {
+		addQueryParam(&query, "type", arrayToString(params.Columns.Types))
+	}
+
+	if params.ColumnValues != nil {
+		addQueryParam(&query, "ids", arrayToString(params.ColumnValues.IDs))
+	}
+
 	query += ") { "
 	return query
+}
+
+func arrayToString(s []string) (result string) {
+	// it will be transformed to []byte later on, therefore we need \" in string
+	// do not remove, unless necessary
+
+	result = "["
+	for i, v := range s {
+		result += fmt.Sprintf("\\\"") + v + fmt.Sprintf("\\\"")
+		if i != len(s)-1 {
+			result += fmt.Sprintf(" , ")
+		}
+	}
+	result += "]"
+	fmt.Println("StringArray: ", result)
+	return
 }
 
 func addQueryParam(query *string, name, value string) {
 	if value == "[]" || value == "0" {
 		return
 	}
-	*query += fmt.Sprintf(" ( %s: %s ", name, value)
+	*query += fmt.Sprintf("( %s: %s ", name, value)
 	return
 }
 

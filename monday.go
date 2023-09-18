@@ -7,9 +7,8 @@ func NewAPI(clientID, clientSecret string) *API {
 	}
 }
 
-func (api *API) SetOptions(domain, auth string, debug bool) error {
+func (api *API) SetOptions(domain, auth string, debug bool) {
 	api.Domain = domain
 	api.Auth = auth
 	api.Debug = debug
-	return nil
 }

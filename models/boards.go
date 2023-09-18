@@ -84,6 +84,19 @@ type Update struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type UpdateQuery struct {
+	//Assets    *AssetsQuery   `json:"assets"`
+	Body      bool       `json:"body"`
+	CreatedAt bool       `json:"created_at"`
+	Creator   *UserQuery `json:"creator"`
+	CreatorID bool       `json:"creator_id"`
+	ID        bool       `json:"id"`
+	ItemID    bool       `json:"item_id"`
+	//Replies   *RepliesQuery `json:"replies"`
+	TextBody  bool `json:"text_body"`
+	UpdatedAt bool `json:"updated_at"`
+}
+
 type Assets struct {
 	CreatedAt        time.Time `json:"created_at"`
 	FileExtension    string    `json:"file_extension"`
