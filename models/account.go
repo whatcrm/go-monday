@@ -1,7 +1,7 @@
 package models
 
 type Account struct {
-	ID                   int               `json:"id,omitempty"`
+	ID                   string            `json:"id,omitempty"`
 	CountryCode          string            `json:"country_code,omitempty"`
 	FirstDayOfTheWeek    string            `json:"first_day_of_the_week,omitempty"`
 	Logo                 string            `json:"logo,omitempty"`
@@ -44,6 +44,6 @@ type PlanQuery struct {
 }
 
 type AccountProducts struct {
-	ID   int    `json:"id,omitempty"`
+	ID   string `json:"id,omitempty"`
 	Kind string `json:"kind,omitempty"`
 }
