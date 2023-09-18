@@ -161,7 +161,7 @@ func arrayToString(s []string) (result string) {
 	result = "["
 	for i, v := range s {
 		result += fmt.Sprintf("\\\"") + v + fmt.Sprintf("\\\"")
-		if i != len(s)-1 {
+		if i != len(s)-1 && v != "" {
 			result += fmt.Sprintf(" , ")
 		}
 	}

@@ -15,7 +15,7 @@ type Item struct {
 	ParentItem   *Item         `json:"parent_item"`
 	RelativeLink string        `json:"relative_link"`
 	State        string        `json:"state"`
-	SubItems     []Item        `json:"sub_items"`
+	SubItems     []Item        `json:"subitems"`
 	Subscribers  []User        `json:"subscribers"`
 	UpdatedAt    *time.Time    `json:"updated_at"`
 	Updates      *Update       `json:"updates"`
@@ -35,7 +35,7 @@ type ItemQuery struct {
 	ParentItem   *ItemQuery        `json:"parent_item"`
 	RelativeLink bool              `json:"relative_link"`
 	State        bool              `json:"state"`
-	SubItems     *ItemQuery        `json:"sub_items"`
+	SubItems     *ItemQuery        `json:"subitems"`
 	Subscribers  *UserQuery        `json:"subscribers"`
 	UpdatedAt    bool              `json:"updated_at"`
 	Updates      *UpdateQuery      `json:"updates"`
