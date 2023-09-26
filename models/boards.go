@@ -3,142 +3,131 @@ package models
 import "time"
 
 type Board struct {
-	ActivityLogs    []ActivityLogs `json:"activity_logs"`
-	BoardFolderID   any            `json:"board_folder_id"`
-	BoardKind       string         `json:"board_kind"`
-	Columns         []Columns      `json:"columns"`
-	Communication   string         `json:"communication"` // JSON string
-	Creator         User           `json:"creator"`
-	Description     any            `json:"description"`
-	Groups          []Group        `json:"groups"`
-	ID              string         `json:"id"`
-	ItemTerminology string         `json:"item_terminology"`
-	ItemsCount      int            `json:"items_count"`
-	Name            string         `json:"name"`
-	Owners          []User         `json:"owners"`
-	Permissions     string         `json:"permissions"`
-	State           string         `json:"state"`
-	Subscribers     []User         `json:"subscribers"`
-	Tags            []Tag          `json:"tags"`
-	TeamOwners      []Teams        `json:"team_owners"`
-	TopGroup        *Group         `json:"top_group"`
-	Type            string         `json:"type"`
-	UpdatedAt       time.Time      `json:"updated_at"`
-	Updates         []interface{}  `json:"updates"`
-	Views           []struct {
-		ID                  string `json:"id"`
-		Name                string `json:"name"`
-		SettingsStr         string `json:"settings_str"`
-		Type                string `json:"type"`
-		ViewSpecificDataStr string `json:"view_specific_data_str"`
-	} `json:"views"`
-	Workspace   *Workspace `json:"workspace"`
-	WorkspaceID int        `json:"workspace_id"`
+	//ActivityLogs    []ActivityLogs `graphql:"activity_logs"`
+	BoardFolderID any    `graphql:"board_folder_id"`
+	BoardKind     string `graphql:"board_kind"`
+	//Columns         []Columns
+	Communication string // JSON string
+	//Creator         Nested
+	Description string
+	//Groups          []NestedGroup
+	ID              string
+	ItemTerminology string `graphql:"item_terminology"`
+	ItemsCount      int    `graphql:"items_count"`
+	Name            string
+	//Owners          []Nested
+	Permissions string
+	State       string
+	//Subscribers     []Nested
+	//Tags            []Tag
+	//TeamOwners      []Teams `graphql:"team_owners"`
+	//TopGroup        Group   `graphql:"top_group"`
+	Type      string
+	UpdatedAt time.Time `graphql:"updated_at"`
+	//Updates         []Update  `graphql:"updates"`
+	//Views           []BoardView
+	//Workspace       Workspace
+	WorkspaceID string `graphql:"workspace_id"`
 }
 
 type ActivityLogs struct {
-	AccountID string    `json:"account_id"`
-	CreatedAt string    `json:"created_at"`
-	Data      time.Time `json:"data"`
-	Entity    string    `json:"entity"`
-	Event     string    `json:"event"`
-	ID        string    `json:"id"`
-	UserID    string    `json:"user_id"`
+	AccountID string `graphql:"account_id"`
+	CreatedAt string `graphql:"created_at"`
+	Data      string `graphql:"data"`
+	Entity    string `graphql:"entity"`
+	Event     string `graphql:"event"`
+	ID        string `graphql:"id"`
+	UserID    string `graphql:"user_id"`
 }
 
 type Columns struct {
-	Archived    bool        `json:"archived"`
-	Description interface{} `json:"description"`
-	ID          string      `json:"id"`
-	SettingsStr string      `json:"settings_str"`
-	Title       string      `json:"title"`
-	Type        string      `json:"type"`
-	Width       int         `json:"width"`
+	Archived    bool        `graphql:"archived"`
+	Description interface{} `graphql:"description"`
+	ID          string      `graphql:"id"`
+	SettingsStr string      `graphql:"settings_str"`
+	Title       string      `graphql:"title"`
+	Type        string      `graphql:"type"`
+	Width       int         `graphql:"width"`
 }
 
 type Group struct {
-	Archived bool   `json:"archived"`
-	ID       string `json:"id"`
-	Color    string `json:"color"`
-	Deleted  bool   `json:"deleted"`
-	Position string `json:"position"`
-	Title    string `json:"title"`
+	Archived bool   `graphql:"archived"`
+	ID       string `graphql:"id"`
+	Color    string `graphql:"color"`
+	Deleted  bool   `graphql:"deleted"`
+	Position string `graphql:"position"`
+	Title    string `graphql:"title"`
 }
 
 type Tag struct {
-	Color string `json:"color"`
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
+	Color string `graphql:"color"`
+	ID    int    `graphql:"id"`
+	Name  string `graphql:"name"`
 }
 
 type Update struct {
-	Assets    *Assets   `json:"assets"`
-	Body      string    `json:"body"`
-	CreatedAt time.Time `json:"created_at"`
-	Creator   *User     `json:"creator"`
-	CreatorID string    `json:"creator_id"`
-	ID        int       `json:"id"`
-	ItemID    int       `json:"item_id"`
-	Replies   Replies   `json:"replies"`
-	TextBody  string    `json:"text_body"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Assets    []Nested  `graphql:"assets"`
+	Body      string    `graphql:"body"`
+	CreatedAt time.Time `graphql:"created_at"`
+	Creator   Nested    `graphql:"creator"`
+	CreatorID string    `graphql:"creator_id"`
+	ID        string    `graphql:"id"`
+	ItemID    string    `graphql:"item_id"`
+	Replies   []Replies `graphql:"replies"`
+	TextBody  string    `graphql:"text_body"`
+	UpdatedAt time.Time `graphql:"updated_at"`
 }
 
-type UpdateQuery struct {
-	//Assets    *AssetsQuery   `json:"assets"`
-	Body      bool       `json:"body"`
-	CreatedAt bool       `json:"created_at"`
-	Creator   *UserQuery `json:"creator"`
-	CreatorID bool       `json:"creator_id"`
-	ID        bool       `json:"id"`
-	ItemID    bool       `json:"item_id"`
-	//Replies   *RepliesQuery `json:"replies"`
-	TextBody  bool `json:"text_body"`
-	UpdatedAt bool `json:"updated_at"`
+type BoardView struct {
+	ID                  string `graphql:"id"`
+	Name                string `graphql:"name"`
+	SettingsStr         string `graphql:"settings_str"`
+	Type                string `graphql:"type"`
+	ViewSpecificDataStr string `graphql:"view_specific_data_str"`
 }
 
 type Assets struct {
-	CreatedAt        time.Time `json:"created_at"`
-	FileExtension    string    `json:"file_extension"`
-	FileSize         int       `json:"file_size"`
-	ID               int       `json:"id"`
-	Name             string    `json:"name"`
-	OriginalGeometry string    `json:"original_geometry"`
-	PublicURL        string    `json:"public_url"`
-	UploadedBy       *User     `json:"uploaded_by"`
-	URL              string    `json:"url"`
-	URLThumbnail     string    `json:"url_thumbnail"`
+	CreatedAt        time.Time `graphql:"created_at"`
+	FileExtension    string    `graphql:"file_extension"`
+	FileSize         int       `graphql:"file_size"`
+	ID               string    `graphql:"id"`
+	Name             string    `graphql:"name"`
+	OriginalGeometry string    `graphql:"original_geometry"`
+	PublicURL        string    `graphql:"public_url"`
+	UploadedBy       *Nested   `graphql:"uploaded_by"`
+	URL              string    `graphql:"url"`
+	URLThumbnail     string    `graphql:"url_thumbnail"`
 }
 
 type Replies struct {
-	Body      string    `json:"body"`
-	CreatedAt time.Time `json:"created_at"`
-	Creator   *User     `json:"creator"`
-	CreatorID string    `json:"creator_id"`
-	ID        int       `json:"id"`
-	TextBody  string    `json:"text_body"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Body      string    `graphql:"body"`
+	CreatedAt time.Time `graphql:"created_at"`
+	Creator   *Nested   `graphql:"creator"`
+	CreatorID string    `graphql:"creator_id"`
+	ID        string    `graphql:"id"`
+	TextBody  string    `graphql:"text_body"`
+	UpdatedAt time.Time `graphql:"updated_at"`
 }
 
 type Workspace struct {
-	ID                    int               `json:"id"`
-	Name                  string            `json:"name"`
-	AccountProduct        *AccountProducts  `json:"account_product"`
-	CreateAt              time.Time         `json:"create_at"`
-	Description           string            `json:"description"`
-	Kind                  string            `json:"kind"`
-	OwnersSubscribers     *User             `json:"owners_subscribers"`
-	Settings              WorkspaceSettings `json:"settings"`
-	State                 string            `json:"state"`
-	TeamOwnersSubscribers []Teams           `json:"team_owners_subscribers"`
-	UsersSubscribers      []User            `json:"users_subscribers"`
+	ID                    int               `graphql:"id"`
+	Name                  string            `graphql:"name"`
+	AccountProduct        AccountProducts   `graphql:"account_product"`
+	CreatedAt             time.Time         `graphql:"created_at"`
+	Description           string            `graphql:"description"`
+	Kind                  string            `graphql:"kind"`
+	OwnersSubscribers     []Nested          `graphql:"owners_subscribers"`
+	Settings              WorkspaceSettings `graphql:"settings"`
+	State                 string            `graphql:"state"`
+	TeamOwnersSubscribers []Teams           `graphql:"team_owners_subscribers"`
+	UsersSubscribers      []Nested          `graphql:"users_subscribers"`
 }
 
 type WorkspaceSettings struct {
-	Icon IconSettings `json:"icon"`
+	Icon IconSettings `graphql:"icon"`
 }
 
 type IconSettings struct {
-	Color string `json:"color"`
-	Image string `json:"image"`
+	Color string `graphql:"color"`
+	Image string `graphql:"image"`
 }

@@ -3,67 +3,43 @@ package models
 import "time"
 
 type Item struct {
-	Assets       *Assets       `json:"assets"`
-	Board        *Board        `json:"board"`
-	Name         string        `json:"name"`
-	ColumnValues []ColumnValue `json:"column_values"`
-	CreatedAt    *time.Time    `json:"created_at"`
-	Creator      *User         `json:"creator"`
-	Email        string        `json:"email"`
-	Group        *Group        `json:"group"`
-	ID           int           `json:"id"`
-	ParentItem   *Item         `json:"parent_item"`
-	RelativeLink string        `json:"relative_link"`
-	State        string        `json:"state"`
-	SubItems     []Item        `json:"subitems"`
-	Subscribers  []User        `json:"subscribers"`
-	UpdatedAt    *time.Time    `json:"updated_at"`
-	Updates      *Update       `json:"updates"`
+	ID           string        `graphql:"id"`
+	Name         string        `graphql:"name"`
+	Email        string        `graphql:"email"`
+	Creator      Nested        `graphql:"creator"`
+	Board        Nested        `graphql:"board"`
+	Group        NestedGroup   `graphql:"group"`
+	ParentItem   Nested        `graphql:"parent_item"`
+	SubItems     []Nested      `graphql:"subitems"`
+	CreatedAt    time.Time     `graphql:"created_at"`
+	UpdatedAt    time.Time     `graphql:"updated_at"`
+	RelativeLink string        `graphql:"relative_link"`
+	State        string        `graphql:"state"`
+	Subscribers  []Nested      `graphql:"subscribers"`
+	Updates      []Update      `graphql:"updates"`
+	ColumnValues []ColumnValue `graphql:"column_values"`
+	Assets       []Assets      `graphql:"assets"`
 }
 
-type ItemQuery struct {
-	QueryParams  *QueryParams      `json:"query_params"`
-	Assets       bool              `json:"assets"`
-	Board        bool              `json:"board"`
-	Name         bool              `json:"name"`
-	ColumnValues *ColumnValueQuery `json:"column_values"`
-	CreatedAt    bool              `json:"created_at"`
-	Creator      *UserQuery        `json:"creator"`
-	Email        bool              `json:"email"`
-	Group        *Group            `json:"group"`
-	ID           bool              `json:"id"`
-	ParentItem   *ItemQuery        `json:"parent_item"`
-	RelativeLink bool              `json:"relative_link"`
-	State        bool              `json:"state"`
-	SubItems     *ItemQuery        `json:"subitems"`
-	Subscribers  *UserQuery        `json:"subscribers"`
-	UpdatedAt    bool              `json:"updated_at"`
-	Updates      *UpdateQuery      `json:"updates"`
+type NestedUpdate struct {
+	ID     int
+	ItemID int `graphql:"item_id"`
 }
 
 type ColumnValue struct {
-	AdditionalInfo string `json:"additional_info"` // JSON
-	Description    string `json:"description"`
-	ID             string `json:"id"`
-	Text           string `json:"text"`
-	Title          string `json:"title"`
-	Type           string `json:"type"`
-	Value          string `json:"value"` // JSON: phone, changed_at, countryShortName
+	Column `graphql:"column"`
+	ID     string `graphql:"id"`
+	Text   string `graphql:"text"`
+	Type   string `graphql:"type"`
+	Value  string `graphql:"value"`
 }
 
-type ColumnValueJSON struct {
-	Phone            string    `json:"phone"`
-	ChangedAt        time.Time `json:"changed_at"`
-	CountryShortName string    `json:"countryShortName"`
-}
-
-type ColumnValueQuery struct {
-	QueryParams    *QueryParams `json:"query_params"`
-	AdditionalInfo bool         `json:"additional_info"` // JSON
-	Description    bool         `json:"description"`
-	ID             bool         `json:"id"`
-	Text           bool         `json:"text"`
-	Title          bool         `json:"title"`
-	Type           bool         `json:"type"`
-	Value          bool         `json:"value"` // JSON: phone, changed_at, countryShortName
+type Column struct {
+	Archived    bool   `graphql:"archived"`
+	Description any    `graphql:"description"` // TODO change to string
+	ID          string `graphql:"id"`
+	SettingsStr string `graphql:"settings_str"`
+	Title       string `graphql:"title"`
+	Type        string `graphql:"type"`
+	Width       int    `graphql:"width"`
 }

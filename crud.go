@@ -1,28 +1,37 @@
 package monday
 
-type Create struct {
-	api *API
-}
 type Get struct {
 	api *API
 }
-type Update struct {
-	api *API
-}
-type Delete struct {
-	api *API
-}
 
-func (api *API) Create() *Create {
-	return &Create{api}
+type Mutate struct {
+	api *API
 }
 
 func (api *API) Get() *Get {
 	return &Get{api}
 }
-func (api *API) Update() *Update {
-	return &Update{api}
+
+func (api *API) Mutation() *Mutate {
+	return &Mutate{api}
 }
-func (api *API) Delete() *Delete {
-	return &Delete{api}
+
+func (c *Get) CustomQuery(query interface{}) (out interface{}, err error) {
+	options := makeRequestOptions{
+		BaseURL: mondayAPI,
+		Query:   &query,
+	}
+
+	err = c.api.makeRequest(options)
+	return
+}
+
+func (m *Mutate) CustomMutation(mutation interface{}) (out interface{}, err error) {
+	options := makeRequestOptions{
+		BaseURL:  mondayAPI,
+		Mutation: &mutation,
+	}
+
+	err = m.api.makeRequest(options)
+	return
 }
