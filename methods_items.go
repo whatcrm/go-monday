@@ -2,6 +2,7 @@ package monday
 
 import (
 	"github.com/whatcrm/go-monday/models"
+	"log"
 )
 
 func (c *Get) Items(ids []ID, newestFirst, excludeNonActive bool, limit, page int) (out []models.Item, err error) {
@@ -32,6 +33,41 @@ func (c *Get) Items(ids []ID, newestFirst, excludeNonActive bool, limit, page in
 
 	err = c.api.makeRequest(options)
 	out = query.Items
+	return
+}
+
+type ItemsResponse struct {
+	Cursor string        `graphql:"cursor"`
+	Items  []models.Item `graphql:"items"`
+}
+
+type ItemsPageByColumnValuesQuery struct {
+	ColumnID     string   `json:"column_id"`
+	ColumnValues []string `json:"column_values"`
+}
+
+func (c *Get) ItemsPageByColumnValues(boardID ID, columns []ItemsPageByColumnValuesQuery) (out []models.Item, err error) {
+
+	var query struct {
+		ItemResponse ItemsResponse `graphql:"items_page_by_column_values ( board_id: $board_id columns: $columns ) "`
+	}
+
+	log.Printf("%+v\n", columns)
+
+	var variables = map[string]interface{}{
+		"board_id": boardID,
+		"columns":  columns, // "lead_phone", [\"79123456789\"]
+	}
+	log.Println(variables)
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Query:     &query,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	out = query.ItemResponse.Items
 	return
 }
 

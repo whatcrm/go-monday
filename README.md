@@ -33,13 +33,13 @@ go get github.com/whatcrm/go-monday/models
 ## Features
 
 - *Lightweight and easy-to-use*
-- Supersonic performance thanks to the **[Fiber web framework](https://github.com/gofiber/fiber)**
+- Seamless and user-friendly **[graphql client implementation](https://github.com/hasura/go-graphql-client)**
 - Comprehensive **CRUD** for working with Monday CRM
 
 ## Ecosystem / Documentations
 
 - [monday documentation](https://developer.monday.com/api-reference/docs)
-- [Fiber Web Framework documentation](https://docs.gofiber.io/)
+- [graphQL client implementation](https://github.com/hasura/go-graphql-client)
 
 
 ## Contributors
