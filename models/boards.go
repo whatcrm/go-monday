@@ -94,7 +94,7 @@ type Assets struct {
 	Name             string    `graphql:"name"`
 	OriginalGeometry string    `graphql:"original_geometry"`
 	PublicURL        string    `graphql:"public_url"`
-	UploadedBy       *Nested   `graphql:"uploaded_by"`
+	UploadedBy       Nested    `graphql:"uploaded_by"`
 	URL              string    `graphql:"url"`
 	URLThumbnail     string    `graphql:"url_thumbnail"`
 }
