@@ -35,14 +35,14 @@ func (c *Get) Account() (out models.Account, err error) {
 }
 
 type Webhook struct {
-	BoardID int    `graphql:"board_id"`
+	BoardID string `graphql:"board_id"`
 	Config  string `graphql:"config"`
 	Event   string `graphql:"event"`
-	ID      int    `graphql:"id"`
+	ID      string `graphql:"id"`
 }
 type WebhookEventType string
 
-func (m *Mutate) CreateWebhook(boardID, uri string, event WebhookEventType) (err error) {
+func (m *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (err error) {
 	var mutation struct {
 		Webhook Webhook `graphql:"create_webhook (board_id: $board_id url: $url event: $event)"`
 	}
@@ -55,7 +55,7 @@ func (m *Mutate) CreateWebhook(boardID, uri string, event WebhookEventType) (err
 
 	options := makeRequestOptions{
 		BaseURL:   mondayAPI,
-		Mutation:  mutation,
+		Mutation:  &mutation,
 		Variables: variables,
 	}
 
