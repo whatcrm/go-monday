@@ -9,8 +9,8 @@ type Board struct {
 	//Columns         []Columns
 	Communication string // JSON string
 	//Creator         Nested
-	Description string
-	//Groups          []NestedGroup
+	Description     string
+	Groups          []NestedGroup
 	ID              string
 	ItemTerminology string `graphql:"item_terminology"`
 	ItemsCount      int    `graphql:"items_count"`
