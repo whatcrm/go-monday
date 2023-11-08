@@ -121,15 +121,16 @@ func (m *Mutate) CreateItemWithColumnValues(boardID ID, name, groupID string, co
 	return
 }
 
-func (m *Mutate) CreateUpdate(itemID ID, body string) (out models.Update, err error) {
+func (m *Mutate) CreateUpdate(itemID, parentID ID, body string) (out models.Update, err error) {
 
 	var mutation struct {
-		Update models.Update `graphql:"create_update (item_id: $item_id body: $body)"`
+		Update models.Update `graphql:"create_update (item_id: $item_id body: $body parent_id: $parent_id)"`
 	}
 
 	variables := map[string]interface{}{
-		"item_id": itemID,
-		"body":    body,
+		"item_id":   itemID,
+		"body":      body,
+		"parent_id": parentID,
 	}
 
 	options := makeRequestOptions{

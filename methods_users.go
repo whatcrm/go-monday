@@ -17,7 +17,7 @@ func (c *Get) Users() (out []models.User, err error) {
 	return
 }
 
-func (c *Get) User(ids []int) (out []models.User, err error) {
+func (c *Get) User(ids []ID) (out []models.User, err error) {
 	var query struct {
 		Users []models.User `graphql:"users ( ids: $user_ids ) "`
 	}
