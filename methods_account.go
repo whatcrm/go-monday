@@ -34,7 +34,7 @@ func (c *Get) Account() (out models.Account, err error) {
 	return
 }
 
-type Webhook struct {
+type Webhooks struct {
 	BoardID string `graphql:"board_id"`
 	Config  string `graphql:"config"`
 	Event   string `graphql:"event"`
@@ -42,9 +42,29 @@ type Webhook struct {
 }
 type WebhookEventType string
 
+func (c *Get) Webhooks(boardID ID) (out []Webhooks, err error) {
+	var query struct {
+		Webhooks []Webhooks `graphql:"webhooks ( board_id: $board_id ) "`
+	}
+
+	variables := map[string]interface{}{
+		"board_id": boardID,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Query:     &query,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	out = query.Webhooks
+	return
+}
+
 func (m *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (err error) {
 	var mutation struct {
-		Webhook Webhook `graphql:"create_webhook (board_id: $board_id url: $url event: $event)"`
+		Webhook Webhooks `graphql:"create_webhook (board_id: $board_id url: $url event: $event)"`
 	}
 
 	variables := map[string]interface{}{
@@ -65,7 +85,7 @@ func (m *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (
 
 func (m *Mutate) DeleteWebhook(id ID) (err error) {
 	var mutation struct {
-		Webhook Webhook `graphql:"delete_webhook (id: $id)"`
+		Webhook Webhooks `graphql:"delete_webhook (id: $id)"`
 	}
 
 	variables := map[string]interface{}{
