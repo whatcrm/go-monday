@@ -6,7 +6,7 @@ type Board struct {
 	//ActivityLogs    []ActivityLogs `graphql:"activity_logs"`
 	BoardFolderID any    `graphql:"board_folder_id"`
 	BoardKind     string `graphql:"board_kind"`
-	//Columns         []Columns
+	Columns       []Columns
 	Communication string // JSON string
 	//Creator         Nested
 	Description     string
@@ -19,7 +19,7 @@ type Board struct {
 	Permissions string
 	State       string
 	//Subscribers     []Nested
-	//Tags            []Tag
+	Tags []Tag
 	//TeamOwners      []Teams `graphql:"team_owners"`
 	//TopGroup        Group   `graphql:"top_group"`
 	Type      string
@@ -61,7 +61,7 @@ type Group struct {
 
 type Tag struct {
 	Color string `graphql:"color"`
-	ID    int    `graphql:"id"`
+	ID    string `graphql:"id"`
 	Name  string `graphql:"name"`
 }
 

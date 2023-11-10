@@ -143,3 +143,23 @@ func (m *Mutate) CreateUpdate(itemID, parentID ID, body string) (out models.Upda
 	out = mutation.Update
 	return
 }
+
+func (m *Mutate) CreateOrGetTag(boardID ID, tagName string) (out models.Tag, err error) {
+	var mutation struct {
+		Tag models.Tag `graphql:"create_or_get_tag (tag_name: $tag_name board_id: $board_id)"`
+	}
+	variables := map[string]interface{}{
+		"board_id": boardID,
+		"tag_name": tagName,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Mutation:  &mutation,
+		Variables: variables,
+	}
+
+	err = m.api.makeRequest(options)
+	out = mutation.Tag
+	return
+}

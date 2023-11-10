@@ -41,6 +41,31 @@ func (c *Get) Boards() (out []models.Board, err error) {
 	return
 }
 
+func (c *Get) Board(id ID) (out models.Board, err error) {
+	var query struct {
+		Board []models.Board `graphql:"boards ( ids: $ids ) "`
+	}
+
+	var ids = []ID{id}
+
+	variables := map[string]interface{}{
+		"ids": ids,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Query:     &query,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+
+	if query.Board != nil {
+		out = query.Board[0]
+	}
+	return
+}
+
 func (c *Get) Groups(id []ID) (out []models.NestedGroup, err error) {
 
 	var query struct {
