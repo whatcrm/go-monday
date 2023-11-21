@@ -1,6 +1,9 @@
 package monday
 
-import "github.com/whatcrm/go-monday/models"
+import (
+	"errors"
+	"github.com/whatcrm/go-monday/models"
+)
 
 type BoardParams struct {
 	IDs          []int `json:"ids"`
@@ -46,6 +49,9 @@ func (c *Get) Board(id ID) (out models.Board, err error) {
 		Board []models.Board `graphql:"boards ( ids: $ids ) "`
 	}
 
+	if id == "" {
+		return models.Board{}, errors.New("id must be valid")
+	}
 	var ids = []ID{id}
 
 	variables := map[string]interface{}{
