@@ -110,7 +110,7 @@ type Replies struct {
 }
 
 type Workspace struct {
-	ID                    int               `graphql:"id"`
+	ID                    string            `graphql:"id"`
 	Name                  string            `graphql:"name"`
 	AccountProduct        AccountProducts   `graphql:"account_product"`
 	CreatedAt             time.Time         `graphql:"created_at"`

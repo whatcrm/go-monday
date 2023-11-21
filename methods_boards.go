@@ -66,6 +66,29 @@ func (c *Get) Board(id ID) (out models.Board, err error) {
 	return
 }
 
+func (c *Mutate) CreateBoard(name string, kind BoardKind, workspace ID) (out models.Board, err error) {
+	var mutation struct {
+		Board models.Board `graphql:"create_board ( board_name: $name board_kind: $kind workspace_id: $workspace_id ) "`
+	}
+
+	variables := map[string]interface{}{
+		"name":         name,
+		"kind":         kind,
+		"workspace_id": workspace,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Mutation:  &mutation,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+
+	out = mutation.Board
+	return
+}
+
 func (c *Get) Groups(id []ID) (out []models.NestedGroup, err error) {
 
 	var query struct {

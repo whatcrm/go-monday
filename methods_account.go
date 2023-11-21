@@ -62,7 +62,7 @@ func (c *Get) Webhooks(boardID ID) (out []Webhooks, err error) {
 	return
 }
 
-func (m *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (err error) {
+func (c *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (err error) {
 	var mutation struct {
 		Webhook Webhooks `graphql:"create_webhook (board_id: $board_id url: $url event: $event)"`
 	}
@@ -79,11 +79,11 @@ func (m *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (
 		Variables: variables,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	return
 }
 
-func (m *Mutate) DeleteWebhook(id ID) (err error) {
+func (c *Mutate) DeleteWebhook(id ID) (err error) {
 	var mutation struct {
 		Webhook Webhooks `graphql:"delete_webhook (id: $id)"`
 	}
@@ -98,6 +98,6 @@ func (m *Mutate) DeleteWebhook(id ID) (err error) {
 		Variables: variables,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	return
 }

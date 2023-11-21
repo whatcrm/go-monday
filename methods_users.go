@@ -57,7 +57,7 @@ func (c *Get) Teams(ids []int) (out []models.Teams, err error) {
 	return
 }
 
-func (m *Mutate) CreateNotification(text string, userID, targetID ID, targetType models.NotificationTargetType) (out models.Notification, err error) {
+func (c *Mutate) CreateNotification(text string, userID, targetID ID, targetType models.NotificationTargetType) (out models.Notification, err error) {
 	var mutation struct {
 		Notification models.Notification `graphql:"create_notification ( text: $text user_id: $user_id target_id: $target_id target_type: $target_type )"`
 	}
@@ -75,7 +75,7 @@ func (m *Mutate) CreateNotification(text string, userID, targetID ID, targetType
 		Variables: variables,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	out = mutation.Notification
 	return
 }

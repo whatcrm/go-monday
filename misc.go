@@ -2,11 +2,13 @@ package monday
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/hasura/go-graphql-client"
+	logging "github.com/whatcrm/go-monday/logger"
 	"golang.org/x/oauth2"
-	"log"
 	"net/http"
+	"reflect"
 )
 
 func (api *API) setRouter(uri string) (client *graphql.Client) {
@@ -27,24 +29,36 @@ func (api *API) makeRequest(options makeRequestOptions) (err error) {
 		return errors.New("query and mutation are not found")
 	}
 
-	api.log("setting the router...")
+	l := logOptions{}
+	l.Variables = options.Variables
 	client := api.setRouter(options.BaseURL)
 
-	api.log("sending the request...")
 	if options.Query != nil {
+		l.Request = reflect.TypeOf(options.Query).Elem().Field(0).Tag.Get("graphql")
 		err = client.Query(context.Background(), options.Query, options.Variables)
+		l.Response = options.Query
 	}
 
 	if options.Mutation != nil {
+		l.Request = reflect.TypeOf(options.Mutation).Elem().Field(0).Tag.Get("graphql")
 		err = client.Mutate(context.Background(), options.Mutation, options.Variables)
+		l.Response = options.Mutation
 	}
 
-	api.log("finishing the request")
+	if err != nil {
+		l.Error = err
+		l.Response = nil
+	}
+
+	m, _ := json.Marshal(l)
+	api.log("============================")
+	api.log(string(m))
 	return
 }
 
 func (api *API) log(message ...interface{}) {
 	if api.Debug {
-		log.Println(message...)
+		l := logging.GetLogger()
+		l.Info(message...)
 	}
 }

@@ -3,8 +3,10 @@ module github.com/whatcrm/go-monday
 go 1.20
 
 require (
+	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/gofiber/fiber/v2 v2.43.0
 	github.com/hasura/go-graphql-client v0.10.0
+	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/oauth2 v0.12.0
 )
 

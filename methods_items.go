@@ -71,7 +71,7 @@ func (c *Get) ItemsPageByColumnValues(boardID ID, columns []ItemsPageByColumnVal
 	return
 }
 
-func (m *Mutate) CreateItem(boardID ID, name, groupID string, clim bool) (out models.Item, err error) {
+func (c *Mutate) CreateItem(boardID ID, name, groupID string, clim bool) (out models.Item, err error) {
 
 	var mutation struct {
 		CreateItem models.Item `graphql:"create_item ( item_name: $item_name board_id: $board_id group_id: $group_id create_labels_if_missing: $clim )"`
@@ -90,14 +90,14 @@ func (m *Mutate) CreateItem(boardID ID, name, groupID string, clim bool) (out mo
 		Variables: variables,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	out = mutation.CreateItem
 	return
 }
 
 type ID string
 
-func (m *Mutate) CreateItemWithColumnValues(boardID ID, name, groupID string, columnValues JSON, clim bool) (out models.Item, err error) {
+func (c *Mutate) CreateItemWithColumnValues(boardID ID, name, groupID string, columnValues JSON, clim bool) (out models.Item, err error) {
 
 	var mutation struct {
 		Item models.Item `graphql:"create_item ( item_name: $item_name board_id: $board_id group_id: $group_id column_values: $column_values create_labels_if_missing: $clim )"`
@@ -116,12 +116,12 @@ func (m *Mutate) CreateItemWithColumnValues(boardID ID, name, groupID string, co
 		Variables: variables,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	out = mutation.Item
 	return
 }
 
-func (m *Mutate) CreateUpdate(itemID, parentID ID, body string) (out models.Update, err error) {
+func (c *Mutate) CreateUpdate(itemID, parentID ID, body string) (out models.Update, err error) {
 
 	var mutation struct {
 		Update models.Update `graphql:"create_update (item_id: $item_id body: $body parent_id: $parent_id)"`
@@ -139,12 +139,33 @@ func (m *Mutate) CreateUpdate(itemID, parentID ID, body string) (out models.Upda
 		Variables: variables,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	out = mutation.Update
 	return
 }
 
-func (m *Mutate) CreateOrGetTag(boardID ID, tagName string) (out models.Tag, err error) {
+func (c *Mutate) LikeUpdate(updateID ID) (out models.Update, err error) {
+
+	var mutation struct {
+		Update models.Update `graphql:"like_update ( update_id: $update_id )"`
+	}
+
+	variables := map[string]interface{}{
+		"update_id": updateID,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Mutation:  &mutation,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	out = mutation.Update
+	return
+}
+
+func (c *Mutate) CreateOrGetTag(boardID ID, tagName string) (out models.Tag, err error) {
 	var mutation struct {
 		Tag models.Tag `graphql:"create_or_get_tag (tag_name: $tag_name board_id: $board_id)"`
 	}
@@ -159,7 +180,7 @@ func (m *Mutate) CreateOrGetTag(boardID ID, tagName string) (out models.Tag, err
 		Variables: variables,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	out = mutation.Tag
 	return
 }

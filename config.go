@@ -36,3 +36,10 @@ type makeRequestOptions struct {
 	Options graphql.Option
 	// Params
 }
+
+type logOptions struct {
+	Request   interface{}            `json:"request"`
+	Variables map[string]interface{} `json:"variables"`
+	Response  interface{}            `json:"response"`
+	Error     error                  `json:"error,omitempty"`
+}

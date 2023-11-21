@@ -27,13 +27,13 @@ func (c *Get) CustomQuery(query interface{}, vars map[string]interface{}) (out i
 	return
 }
 
-func (m *Mutate) CustomMutation(mutation interface{}, vars map[string]interface{}) (out interface{}, err error) {
+func (c *Mutate) CustomMutation(mutation interface{}, vars map[string]interface{}) (out interface{}, err error) {
 	options := makeRequestOptions{
 		BaseURL:   mondayAPI,
 		Mutation:  &mutation,
 		Variables: vars,
 	}
 
-	err = m.api.makeRequest(options)
+	err = c.api.makeRequest(options)
 	return
 }
