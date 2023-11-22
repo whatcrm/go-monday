@@ -5,7 +5,6 @@ import (
 	formatter "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/sirupsen/logrus"
 	"io"
-	"log"
 	"os"
 	"runtime"
 	"time"
@@ -82,43 +81,24 @@ func init() {
 	e = logrus.NewEntry(l)
 }
 
-//
-//func CreateFile() (*os.File, error) {
-//	today := time.Now()
-//
-//	logFilename = "./logs/gql-" +   + "/" + today.Format("2006-01-02") + ".log"
-//
-//	filename := "./logs/gql-" + today.Format("2006-01-02") + ".log"
-//	allFile, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
-//	return allFile, err
-//}
-
 func refreshLogFile(entry *logrus.Entry) (*writerHook, bool) {
 	today := time.Now()
-	fileDate := today.Format("2006-01-02")
-
-	folderName, ok := entry.Data["domain"].(string)
-	if !ok {
-		folderName = "core"
-	}
-
-	folder := "./logs/" + folderName
-	err := ensureFolder(folder)
-	if err != nil {
-		return nil, false
-	}
+	fileDate := "/gql-" + today.Format("2006-01-02") + ".log"
 
 	if fileDate != logFilename {
+		folderName, ok := entry.Data["domain"].(string)
+		if !ok {
+			folderName = "core"
+		}
+
 		folder := "./logs/" + folderName
 		err := ensureFolder(folder)
 		if err != nil {
 			return nil, false
 		}
-		logFilename = fileDate
 
-		fileDate := "./logs/" + folderName + "/gql-" + fileDate + ".log"
-		log.Println(fileDate)
-		allFile, err := os.OpenFile(fileDate, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
+		logFilename = folder + fileDate
+		allFile, err := os.OpenFile(logFilename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
 		if err != nil {
 			panic(err)
 		}
@@ -140,13 +120,8 @@ func ensureFolder(path string) error {
 		if err := os.MkdirAll(path, os.ModePerm); err != nil {
 			return fmt.Errorf("error creating folder: %v", err)
 		}
-		fmt.Println("Folder created successfully!")
-
 	case err != nil:
 		return fmt.Errorf("error checking folder existence: %v", err)
-
-	default:
-		fmt.Println("Folder already exists.")
 	}
 
 	return nil
