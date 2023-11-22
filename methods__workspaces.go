@@ -11,7 +11,6 @@ func (c *Get) Workspaces() (out []models.Workspace, err error) {
 	options := makeRequestOptions{
 		BaseURL: mondayAPI,
 		Query:   &query,
-		//Variables: variables,
 	}
 
 	err = c.api.makeRequest(options)

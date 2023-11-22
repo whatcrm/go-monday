@@ -6,7 +6,7 @@ import (
 
 func (c *Get) Me() (out models.User, err error) {
 	var query struct {
-		Me models.User
+		Me models.User `graphql:"me"`
 	}
 
 	options := makeRequestOptions{
@@ -21,7 +21,7 @@ func (c *Get) Me() (out models.User, err error) {
 
 func (c *Get) Account() (out models.Account, err error) {
 	var query struct {
-		Account models.Account
+		Account models.Account `graphql:"account"`
 	}
 
 	options := makeRequestOptions{

@@ -5,8 +5,8 @@ import (
 	formatter "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/sirupsen/logrus"
 	"io"
+	"log"
 	"os"
-	"path"
 	"runtime"
 	"time"
 )
@@ -17,7 +17,7 @@ type writerHook struct {
 }
 
 func (hook *writerHook) Fire(entry *logrus.Entry) error {
-	newHook, is := refreshLogFile()
+	newHook, is := refreshLogFile(entry)
 	if is {
 		*hook = *newHook
 	}
@@ -50,18 +50,13 @@ func GetLogger() Logger {
 	return Logger{e}
 }
 
-func (l *Logger) Field(v interface{}) Logger {
-	return Logger{l.WithField("key", v)}
+func (l *Logger) Field(v string) Logger {
+	return Logger{l.WithField("domain", v)}
 }
 
 func init() {
 	l := logrus.New()
 	l.SetReportCaller(true)
-
-	allFile, err := CreateFile()
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	l.SetOutput(io.Discard)
 	l.Formatter = &formatter.Formatter{
@@ -76,37 +71,53 @@ func init() {
 		TrimMessages:     false,
 		CallerFirst:      false,
 		CustomCallerFormatter: func(frame *runtime.Frame) string {
-			filename := path.Base(frame.File)
-			return fmt.Sprintf(" %s:[%d]", filename, frame.Line)
+			return ""
 		},
 	}
 
 	l.AddHook(&writerHook{
-		Writer:    []io.Writer{allFile, os.Stdout},
 		LogLevels: logrus.AllLevels,
 	})
 	l.SetLevel(logrus.TraceLevel)
 	e = logrus.NewEntry(l)
 }
 
-func CreateFile() (*os.File, error) {
-	today := time.Now()
+//
+//func CreateFile() (*os.File, error) {
+//	today := time.Now()
+//
+//	logFilename = "./logs/gql-" +   + "/" + today.Format("2006-01-02") + ".log"
+//
+//	filename := "./logs/gql-" + today.Format("2006-01-02") + ".log"
+//	allFile, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
+//	return allFile, err
+//}
 
-	logFilename = today.Format("2006-01-02")
-
-	filename := "./logs/graphql/" + today.Format("2006-01-02") + ".log"
-	allFile, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
-	return allFile, err
-}
-
-func refreshLogFile() (*writerHook, bool) {
+func refreshLogFile(entry *logrus.Entry) (*writerHook, bool) {
 	today := time.Now()
 	fileDate := today.Format("2006-01-02")
 
+	folderName, ok := entry.Data["domain"].(string)
+	if !ok {
+		folderName = "core"
+	}
+
+	folder := "./logs/" + folderName
+	err := ensureFolder(folder)
+	if err != nil {
+		return nil, false
+	}
+
 	if fileDate != logFilename {
+		folder := "./logs/" + folderName
+		err := ensureFolder(folder)
+		if err != nil {
+			return nil, false
+		}
 		logFilename = fileDate
 
-		fileDate := "logs/" + fileDate + ".log"
+		fileDate := "./logs/" + folderName + "/gql-" + fileDate + ".log"
+		log.Println(fileDate)
 		allFile, err := os.OpenFile(fileDate, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
 		if err != nil {
 			panic(err)
@@ -119,4 +130,24 @@ func refreshLogFile() (*writerHook, bool) {
 	}
 
 	return nil, false
+}
+
+func ensureFolder(path string) error {
+	_, err := os.Stat(path)
+
+	switch {
+	case os.IsNotExist(err):
+		if err := os.MkdirAll(path, os.ModePerm); err != nil {
+			return fmt.Errorf("error creating folder: %v", err)
+		}
+		fmt.Println("Folder created successfully!")
+
+	case err != nil:
+		return fmt.Errorf("error checking folder existence: %v", err)
+
+	default:
+		fmt.Println("Folder already exists.")
+	}
+
+	return nil
 }

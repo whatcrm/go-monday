@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hasura/go-graphql-client"
-	logging "github.com/whatcrm/go-monday/logger"
 	"golang.org/x/oauth2"
 	"net/http"
 	"reflect"
@@ -27,6 +26,9 @@ func (api *API) setRouter(uri string) (client *graphql.Client) {
 func (api *API) makeRequest(options makeRequestOptions) (err error) {
 	if options.Query == nil && options.Mutation == nil {
 		return errors.New("query and mutation are not found")
+	}
+	if api.Auth == "" {
+		return errors.New("authorization is required")
 	}
 
 	l := logOptions{}
@@ -51,14 +53,12 @@ func (api *API) makeRequest(options makeRequestOptions) (err error) {
 	}
 
 	m, _ := json.Marshal(l)
-	api.log("============================")
 	api.log(string(m))
 	return
 }
 
 func (api *API) log(message ...interface{}) {
 	if api.Debug {
-		l := logging.GetLogger()
-		l.Info(message...)
+		api.l.Field(api.Domain).Info(message...)
 	}
 }

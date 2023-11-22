@@ -1,11 +1,14 @@
 package monday
 
+import logging "github.com/whatcrm/go-monday/logger"
+
 type API struct {
 	ClientID     string
 	ClientSecret string
 	Domain       string
 	Auth         string
 	Debug        bool
+	l            logging.Logger
 }
 
 type Tokens struct {

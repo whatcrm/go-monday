@@ -4,7 +4,7 @@ import "github.com/whatcrm/go-monday/models"
 
 func (c *Get) Users() (out []models.User, err error) {
 	var query struct {
-		Users []models.User
+		Users []models.User `graphql:"users"`
 	}
 
 	options := makeRequestOptions{
