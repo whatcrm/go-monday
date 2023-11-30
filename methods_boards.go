@@ -125,3 +125,28 @@ func (c *Get) Groups(id []ID) (out []models.NestedGroup, err error) {
 	}
 	return
 }
+
+type ColumnType string
+
+func (c *Mutate) CreateColumn(boardID ID, title string, columnType ColumnType) (out models.Column, err error) {
+	var mutation struct {
+		Column models.Column `graphql:"create_column ( board_id: $board_id title: $title column_type: $columnType ) "`
+	}
+
+	variables := map[string]interface{}{
+		"board_id":   boardID,
+		"title":      title,
+		"columnType": columnType,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Mutation:  &mutation,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+
+	out = mutation.Column
+	return
+}
