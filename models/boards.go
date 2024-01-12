@@ -26,8 +26,8 @@ type Board struct {
 	UpdatedAt time.Time `graphql:"updated_at"`
 	//Updates         []Update  `graphql:"updates"`
 	//Views           []BoardView
-	//Workspace       Workspace
-	WorkspaceID string `graphql:"workspace_id"`
+	Workspace   Workspace `graphql:"workspace"`
+	WorkspaceID string    `graphql:"workspace_id"`
 }
 
 type ActivityLogs struct {
