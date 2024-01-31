@@ -62,7 +62,7 @@ func (c *Get) Webhooks(boardID ID) (out []Webhooks, err error) {
 	return
 }
 
-func (c *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (err error) {
+func (c *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (wh Webhooks, err error) {
 	var mutation struct {
 		Webhook Webhooks `graphql:"create_webhook (board_id: $board_id url: $url event: $event)"`
 	}
@@ -80,6 +80,7 @@ func (c *Mutate) CreateWebhook(boardID ID, uri string, event WebhookEventType) (
 	}
 
 	err = c.api.makeRequest(options)
+	wh = mutation.Webhook
 	return
 }
 

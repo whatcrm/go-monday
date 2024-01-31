@@ -16,27 +16,27 @@ type BoardParams struct {
 	WorkspaceIDs []int         `json:"workspace_ids"`
 }
 
-func (c *Get) Boards() (out []models.Board, err error) {
+func (c *Get) Boards(page, limit int) (out []models.Board, err error) {
 
 	var query struct {
-		Board []models.Board `graphql:"boards"`
+		Board []models.Board `graphql:"boards ( page: $page limit: $limit ) "`
 	}
 
-	//variables := map[string]interface{}{
-	//"limit":         p.Limit,
-	//"page":          p.Page,
-	//"ids":           p.IDs,
-	//"newest_first":  p.NewestFirst,
-	//"board_kind":    p.BoardKind,
-	//"state":         p.State,
-	//"order_by":      p.OrderBy,
-	//"workspace_ids": p.WorkspaceIDs,
-	//}
-	//
+	variables := map[string]interface{}{
+		"limit": limit,
+		"page":  page,
+		//"ids":           p.IDs,
+		//"newest_first":  p.NewestFirst,
+		//"board_kind":    p.BoardKind,
+		//"state":         p.State,
+		//"order_by":      p.OrderBy,
+		//"workspace_ids": p.WorkspaceIDs,
+	}
+
 	options := makeRequestOptions{
-		BaseURL: mondayAPI,
-		Query:   &query,
-		//Variables: variables,
+		BaseURL:   mondayAPI,
+		Query:     &query,
+		Variables: variables,
 	}
 
 	err = c.api.makeRequest(options)
@@ -148,5 +148,34 @@ func (c *Mutate) CreateColumn(boardID ID, title string, columnType ColumnType) (
 	err = c.api.makeRequest(options)
 
 	out = mutation.Column
+	return
+}
+
+func (c *Get) BoardsByWorkspace(page, limit int, workspaceID []ID) (out []models.Board, err error) {
+
+	var query struct {
+		Board []models.Board `graphql:"boards ( page: $page limit: $limit workspace_ids: $wIDs ) "`
+	}
+
+	variables := map[string]interface{}{
+		"limit": limit,
+		"page":  page,
+		"wIDs":  workspaceID,
+		//"ids":           p.IDs,
+		//"newest_first":  p.NewestFirst,
+		//"board_kind":    p.BoardKind,
+		//"state":         p.State,
+		//"order_by":      p.OrderBy,
+		//"workspace_ids": p.WorkspaceIDs,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Query:     &query,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	out = query.Board
 	return
 }
