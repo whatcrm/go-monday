@@ -40,6 +40,7 @@ func (hook *writerHook) Levels() []logrus.Level {
 
 var e *logrus.Entry
 var logFilename string
+var logPath string
 
 type Logger struct {
 	*logrus.Entry
@@ -47,6 +48,10 @@ type Logger struct {
 
 func GetLogger() Logger {
 	return Logger{e}
+}
+
+func SetPath(path string) {
+	logPath = path
 }
 
 func (l *Logger) Field(v string) Logger {
@@ -85,31 +90,30 @@ func refreshLogFile(entry *logrus.Entry) (*writerHook, bool) {
 	today := time.Now()
 	fileDate := "/gql-" + today.Format("2006-01-02") + ".log"
 
-	if fileDate != logFilename {
-		folderName, ok := entry.Data["domain"].(string)
-		if !ok {
-			folderName = "core"
-		}
-
-		folder := "./logs/" + folderName
-		err := ensureFolder(folder)
-		if err != nil {
-			return nil, false
-		}
-
-		logFilename = folder + fileDate
-		allFile, err := os.OpenFile(logFilename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
-		if err != nil {
-			panic(err)
-		}
-
-		return &writerHook{
-			Writer:    []io.Writer{allFile, os.Stdout},
-			LogLevels: logrus.AllLevels,
-		}, true
+	//if fileDate != logFilename {
+	folderName, ok := entry.Data["domain"].(string)
+	if !ok {
+		folderName = "core"
 	}
 
-	return nil, false
+	folder := logPath + folderName
+	err := ensureFolder(folder)
+	if err != nil {
+		return nil, false
+	}
+
+	logFilename = folder + fileDate
+	allFile, err := os.OpenFile(logFilename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+
+	return &writerHook{
+		Writer:    []io.Writer{allFile, os.Stdout},
+		LogLevels: logrus.AllLevels,
+	}, true
+	//}
+	//return nil, false
 }
 
 func ensureFolder(path string) error {
