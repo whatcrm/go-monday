@@ -95,7 +95,7 @@ func (c *Mutate) DeleteWebhook(id ID) (err error) {
 
 	options := makeRequestOptions{
 		BaseURL:   mondayAPI,
-		Mutation:  mutation,
+		Mutation:  &mutation,
 		Variables: variables,
 	}
 
