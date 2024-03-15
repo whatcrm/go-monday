@@ -66,7 +66,7 @@ func (c *Get) Board(id ID) (out models.Board, err error) {
 
 	err = c.api.makeRequest(options)
 
-	if query.Board != nil {
+	if query.Board != nil && len(query.Board) > 0 {
 		out = query.Board[0]
 	}
 	return
@@ -120,7 +120,7 @@ func (c *Get) Groups(id []ID) (out []models.NestedGroup, err error) {
 
 	err = c.api.makeRequest(options)
 
-	if query.Board != nil {
+	if query.Board != nil && len(query.Board) > 0 {
 		out = query.Board[0].Groups
 	}
 	return
