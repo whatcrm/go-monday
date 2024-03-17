@@ -15,9 +15,10 @@ type Board struct {
 	ItemTerminology string `graphql:"item_terminology"`
 	ItemsCount      int    `graphql:"items_count"`
 	Name            string
-	//Owners          []Nested
-	Permissions string
-	State       string
+	Owners          []Nested
+	Permissions     string
+	State           string
+	Collaborators   []Nested
 	//Subscribers     []Nested
 	Tags []Tag
 	//TeamOwners      []Teams `graphql:"team_owners"`

@@ -7,6 +7,7 @@ type API struct {
 	ClientSecret string
 	Domain       string
 	Auth         string
+	Version      string
 	Debug        bool
 	l            logging.Logger
 }
