@@ -37,7 +37,7 @@ func (c *Get) User(ids []ID) (out []models.User, err error) {
 	return
 }
 
-func (c *Get) Teams(ids []int) (out []models.Teams, err error) {
+func (c *Get) Teams(ids []ID) (out []models.Teams, err error) {
 	var query struct {
 		Teams []models.Teams `graphql:"teams ( ids: $team_ids ) "`
 	}
