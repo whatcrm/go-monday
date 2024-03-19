@@ -37,7 +37,22 @@ func (c *Get) User(ids []ID) (out []models.User, err error) {
 	return
 }
 
-func (c *Get) Teams(ids []ID) (out []models.Teams, err error) {
+func (c *Get) Teams() (out []models.Teams, err error) {
+	var query struct {
+		Teams []models.Teams `graphql:"teams"`
+	}
+
+	options := makeRequestOptions{
+		BaseURL: mondayAPI,
+		Query:   &query,
+	}
+
+	err = c.api.makeRequest(options)
+	out = query.Teams
+	return
+}
+
+func (c *Get) Team(ids []ID) (out []models.Teams, err error) {
 	var query struct {
 		Teams []models.Teams `graphql:"teams ( ids: $team_ids ) "`
 	}
