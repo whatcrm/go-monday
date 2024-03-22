@@ -16,14 +16,16 @@ func (api *API) Mutation() *Mutate {
 	return &Mutate{api}
 }
 
+// CustomQuery query should be pointer &query
 func (c *Get) CustomQuery(query interface{}, vars map[string]interface{}) (out interface{}, err error) {
 	options := makeRequestOptions{
 		BaseURL:   mondayAPI,
-		Query:     &query,
+		Query:     query,
 		Variables: vars,
 	}
 
 	err = c.api.makeRequest(options)
+	out = options.Query
 	return
 }
 
