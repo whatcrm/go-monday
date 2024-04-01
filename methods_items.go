@@ -144,6 +144,26 @@ func (c *Mutate) CreateUpdate(itemID, parentID ID, body string) (out models.Upda
 	return
 }
 
+func (c *Mutate) DeleteUpdate(updateID ID) (err error) {
+
+	var mutation struct {
+		Update models.Update `graphql:"delete_update (id: $id)"`
+	}
+
+	variables := map[string]interface{}{
+		"id": updateID,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Mutation:  &mutation,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	return
+}
+
 func (c *Mutate) LikeUpdate(updateID ID) (out models.Update, err error) {
 
 	var mutation struct {
