@@ -8,6 +8,7 @@ import (
 	"golang.org/x/oauth2"
 	"net/http"
 	"reflect"
+	"strings"
 )
 
 func (api *API) setRouter(uri string) (client *graphql.Client) {
@@ -48,11 +49,16 @@ func (api *API) makeRequest(options makeRequestOptions) (err error) {
 	}
 
 	if err != nil {
-		l.Error = err
+		if strings.Contains(err.Error(), "Internal Server Error") {
+			// cutting html body from an error
+			err = errors.New("500 Internal Server Error")
+		}
+		l.Error = err.Error()
 		l.Response = nil
 	}
 
 	m, _ := json.Marshal(l)
+
 	api.log(string(m))
 	return
 }
