@@ -32,7 +32,10 @@ func (api *API) makeRequest(options makeRequestOptions) (err error) {
 		return errors.New("authorization is required")
 	}
 
-	l := logOptions{}
+	l := logOptions{
+		Domain:      api.Domain,
+		AccessToken: api.Auth,
+	}
 	l.Variables = options.Variables
 	client := api.setRouter(options.BaseURL)
 
