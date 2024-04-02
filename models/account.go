@@ -37,7 +37,7 @@ type NestedInt struct {
 }
 
 type NestedGroup struct {
-	ID      string `graphql:"id"`
-	Deleted bool   `graphql:"deleted"`
-	Title   string `graphql:"title"`
+	ID      string `json:"id"`
+	Deleted bool   `json:"deleted"`
+	Title   string `json:"title"`
 }
