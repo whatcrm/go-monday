@@ -79,6 +79,11 @@ type Update struct {
 	UpdatedAt time.Time `graphql:"updated_at"`
 }
 
+type UpdateReplies struct {
+	ID      string    `graphql:"id"`
+	Replies []Replies `graphql:"replies"`
+}
+
 type BoardView struct {
 	ID                  string `graphql:"id"`
 	Name                string `graphql:"name"`

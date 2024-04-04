@@ -121,6 +121,33 @@ func (c *Mutate) CreateItemWithColumnValues(boardID ID, name, groupID string, co
 	return
 }
 
+func (c *Get) Update(ids []string) (out []models.UpdateReplies, err error) {
+
+	var query struct {
+		Update []models.UpdateReplies `graphql:"updates ( ids: $id ) "`
+	}
+
+	var mIDs []ID
+	for i := range ids {
+		mIDs = append(mIDs, ID(ids[i]))
+	}
+
+	var variables = map[string]interface{}{
+		"id": mIDs,
+	}
+	log.Println(variables)
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Query:     &query,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	out = query.Update
+	return
+}
+
 func (c *Mutate) CreateUpdate(itemID, parentID ID, body string) (out models.Update, err error) {
 
 	var mutation struct {
