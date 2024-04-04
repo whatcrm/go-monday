@@ -204,3 +204,26 @@ func (c *Mutate) CreateOrGetTag(boardID ID, tagName string) (out models.Tag, err
 	out = mutation.Tag
 	return
 }
+
+func (c *Mutate) ChangeColumnValue(boardID, itemID, columnID string, columnValue JSON) (out models.Nested, err error) {
+	var mutation struct {
+		Nested models.Nested `graphql:"change_column_value (board_id: $board_id item_id: $item_id column_id: $column_id value: $value)"`
+	}
+
+	variables := map[string]interface{}{
+		"board_id":  ID(boardID),
+		"item_id":   ID(itemID),
+		"column_id": columnID,
+		"value":     columnValue,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Mutation:  &mutation,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	out = mutation.Nested
+	return
+}
