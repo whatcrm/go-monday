@@ -81,6 +81,7 @@ type Update struct {
 
 type UpdateReplies struct {
 	ID      string    `graphql:"id"`
+	ItemID  string    `graphql:"item_id"`
 	Replies []Replies `graphql:"replies"`
 }
 
