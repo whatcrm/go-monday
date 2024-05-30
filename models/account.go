@@ -12,6 +12,7 @@ type Account struct {
 	SignUpProductKind    string            `graphql:"sign_up_product_kind"`
 	Slug                 string
 	Tier                 string
+	isTrialExpired       bool `graphql:"is_trial_expired"`
 }
 
 type Plan struct {
