@@ -38,10 +38,9 @@ type makeRequestOptions struct {
 }
 
 type logOptions struct {
-	Domain      string                 `json:"domain"`
-	AccessToken string                 `json:"access_token"`
-	Request     interface{}            `json:"request"`
-	Variables   map[string]interface{} `json:"variables"`
-	Response    interface{}            `json:"response"`
-	Error       string                 `json:"error,omitempty"`
+	Domain    string                 `json:"domain"`
+	Request   interface{}            `json:"request"`
+	Variables map[string]interface{} `json:"variables"`
+	Response  interface{}            `json:"response"`
+	Error     string                 `json:"error,omitempty"`
 }

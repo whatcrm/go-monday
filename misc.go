@@ -33,8 +33,7 @@ func (api *API) makeRequest(options makeRequestOptions) (err error) {
 	}
 
 	l := logOptions{
-		Domain:      api.Domain,
-		AccessToken: api.Auth,
+		Domain: api.Domain,
 	}
 	l.Variables = options.Variables
 	client := api.setRouter(options.BaseURL)
