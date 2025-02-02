@@ -254,3 +254,25 @@ func (c *Mutate) ChangeColumnValue(boardID, itemID, columnID string, columnValue
 	out = mutation.Nested
 	return
 }
+
+func (c *Mutate) ChangeMultipleColumnValue(boardID, itemID, columnValues JSON) (out models.Nested, err error) {
+	var mutation struct {
+		Nested models.Nested `graphql:"change_multiple_column_values (board_id: $board_id item_id: $item_id column_values: $column_values)"`
+	}
+
+	variables := map[string]interface{}{
+		"board_id":      ID(boardID),
+		"item_id":       ID(itemID),
+		"column_values": columnValues,
+	}
+
+	options := makeRequestOptions{
+		BaseURL:   mondayAPI,
+		Mutation:  &mutation,
+		Variables: variables,
+	}
+
+	err = c.api.makeRequest(options)
+	out = mutation.Nested
+	return
+}
