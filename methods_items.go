@@ -255,7 +255,7 @@ func (c *Mutate) ChangeColumnValue(boardID, itemID, columnID string, columnValue
 	return
 }
 
-func (c *Mutate) ChangeMultipleColumnValue(boardID, itemID, columnValues JSON) (out models.Nested, err error) {
+func (c *Mutate) ChangeMultipleColumnValue(boardID, itemID string, columnValues JSON) (out models.Nested, err error) {
 	var mutation struct {
 		Nested models.Nested `graphql:"change_multiple_column_values (board_id: $board_id item_id: $item_id column_values: $column_values)"`
 	}
