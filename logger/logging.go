@@ -2,12 +2,13 @@ package logging
 
 import (
 	"fmt"
-	formatter "github.com/antonfisher/nested-logrus-formatter"
-	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"runtime"
 	"time"
+
+	formatter "github.com/antonfisher/nested-logrus-formatter"
+	"github.com/sirupsen/logrus"
 )
 
 type writerHook struct {
@@ -82,6 +83,8 @@ func init() {
 	l.AddHook(&writerHook{
 		LogLevels: logrus.AllLevels,
 	})
+
+	l.SetOutput(io.Discard)
 	l.SetLevel(logrus.TraceLevel)
 	e = logrus.NewEntry(l)
 }
