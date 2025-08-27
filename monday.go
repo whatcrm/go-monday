@@ -15,7 +15,3 @@ func (api *API) SetOptions(domain, auth string, debug bool) {
 	api.Debug = debug
 	api.l = logging.GetLogger()
 }
-
-func (api *API) SetLogPath(path string) {
-	logging.SetPath(path)
-}

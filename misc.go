@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/hasura/go-graphql-client"
-	"golang.org/x/oauth2"
 	"net/http"
 	"reflect"
 	"strings"
+
+	"github.com/hasura/go-graphql-client"
+	"golang.org/x/oauth2"
 )
 
 func (api *API) setRouter(uri string) (client *graphql.Client) {
@@ -67,6 +68,6 @@ func (api *API) makeRequest(options makeRequestOptions) (err error) {
 
 func (api *API) log(message ...interface{}) {
 	if api.Debug {
-		api.l.Field(api.Domain).Info(message...)
+		api.l.Field(api.Domain).Debug(message...)
 	}
 }

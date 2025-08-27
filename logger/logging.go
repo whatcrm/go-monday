@@ -1,11 +1,9 @@
 package logging
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"runtime"
-	"time"
 
 	formatter "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/sirupsen/logrus"
@@ -17,11 +15,6 @@ type writerHook struct {
 }
 
 func (hook *writerHook) Fire(entry *logrus.Entry) error {
-	newHook, is := refreshLogFile(entry)
-	if is {
-		*hook = *newHook
-	}
-
 	line, err := entry.String()
 	if err != nil {
 		return err
@@ -40,8 +33,6 @@ func (hook *writerHook) Levels() []logrus.Level {
 }
 
 var e *logrus.Entry
-var logFilename string
-var logPath string
 
 type Logger struct {
 	*logrus.Entry
@@ -49,10 +40,6 @@ type Logger struct {
 
 func GetLogger() Logger {
 	return Logger{e}
-}
-
-func SetPath(path string) {
-	logPath = path
 }
 
 func (l *Logger) Field(v string) Logger {
@@ -84,52 +71,7 @@ func init() {
 		LogLevels: logrus.AllLevels,
 	})
 
-	l.SetOutput(io.Discard)
+	l.SetOutput(os.Stdout)
 	l.SetLevel(logrus.TraceLevel)
 	e = logrus.NewEntry(l)
-}
-
-func refreshLogFile(entry *logrus.Entry) (*writerHook, bool) {
-	today := time.Now()
-	fileDate := "/gql-" + today.Format("2006-01-02") + ".log"
-
-	//if fileDate != logFilename {
-	folderName, ok := entry.Data["domain"].(string)
-	if !ok {
-		folderName = "core"
-	}
-
-	folder := logPath + folderName
-	err := ensureFolder(folder)
-	if err != nil {
-		return nil, false
-	}
-
-	logFilename = folder + fileDate
-	allFile, err := os.OpenFile(logFilename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
-	if err != nil {
-		panic(err)
-	}
-
-	return &writerHook{
-		Writer:    []io.Writer{allFile, os.Stdout},
-		LogLevels: logrus.AllLevels,
-	}, true
-	//}
-	//return nil, false
-}
-
-func ensureFolder(path string) error {
-	_, err := os.Stat(path)
-
-	switch {
-	case os.IsNotExist(err):
-		if err := os.MkdirAll(path, os.ModePerm); err != nil {
-			return fmt.Errorf("error creating folder: %v", err)
-		}
-	case err != nil:
-		return fmt.Errorf("error checking folder existence: %v", err)
-	}
-
-	return nil
 }
