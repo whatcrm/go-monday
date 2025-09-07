@@ -20,7 +20,7 @@ func (api *API) setRouter(uri string) (client *graphql.Client) {
 	httpClient := oauth2.NewClient(context.Background(), src)
 
 	client = graphql.NewClient(uri, httpClient).WithRequestModifier(func(s *http.Request) {
-		s.Header.Set(apiVersion, October2023)
+		s.Header.Set(apiVersion, api.Version)
 	})
 	return
 }

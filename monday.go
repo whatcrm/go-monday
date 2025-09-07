@@ -13,5 +13,14 @@ func (api *API) SetOptions(domain, auth string, debug bool) {
 	api.Domain = domain
 	api.Auth = auth
 	api.Debug = debug
+	api.Version = April2025
 	api.l = logging.GetLogger()
+}
+
+func (api *API) SetVersion(version string) {
+	if version == "" {
+		return
+	}
+
+	api.Version = version
 }

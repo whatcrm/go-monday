@@ -34,6 +34,26 @@ func (c *Get) Account() (out models.Account, err error) {
 	return
 }
 
+func (c *Get) AppsMonetizationInfo() (out *AppsMonetizationInfo, err error) {
+	var query struct {
+		Info *AppsMonetizationInfo `graphql:"apps_monetization_info"`
+	}
+
+	options := makeRequestOptions{
+		BaseURL: mondayAPI,
+		Query:   &query,
+	}
+
+	c.api.Version = "2025-07"
+	err = c.api.makeRequest(options)
+	out = query.Info
+	return
+}
+
+type AppsMonetizationInfo struct {
+	SeatsCount int `graphql:"seats_count"`
+}
+
 type Webhooks struct {
 	BoardID string `graphql:"board_id"`
 	Config  string `graphql:"config"`

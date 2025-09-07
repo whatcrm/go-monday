@@ -3,8 +3,8 @@ package monday
 import "github.com/hasura/go-graphql-client"
 
 const (
-	apiVersion  = "API-Version"
-	October2023 = "2024-01"
+	apiVersion = "API-Version"
+	April2025  = "2025-04"
 
 	mondayAPI    = "https://api.monday.com/v2"
 	oAuth        = "https://auth.monday.com/oauth2/authorize"
