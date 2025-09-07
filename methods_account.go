@@ -44,7 +44,6 @@ func (c *Get) AppsMonetizationInfo() (out *AppsMonetizationInfo, err error) {
 		Query:   &query,
 	}
 
-	c.api.Version = "2025-07"
 	err = c.api.makeRequest(options)
 	out = query.Info
 	return
