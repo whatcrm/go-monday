@@ -4,7 +4,7 @@ import "github.com/hasura/go-graphql-client"
 
 const (
 	apiVersion = "API-Version"
-	April2025  = "2025-04"
+	April2026  = "2026-04"
 
 	mondayAPI    = "https://api.monday.com/v2"
 	oAuth        = "https://auth.monday.com/oauth2/authorize"
